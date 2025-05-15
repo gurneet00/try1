@@ -52,6 +52,19 @@ systems_data = {}
 os.makedirs("data", exist_ok=True)
 os.makedirs("templates", exist_ok=True)
 os.makedirs("static", exist_ok=True)
+os.makedirs("downloads", exist_ok=True)
+
+# Ensure we have write permissions to these directories
+try:
+    # Test write permissions by creating and removing a test file
+    for directory in ["data", "templates", "static", "downloads"]:
+        test_file = os.path.join(directory, "test_write_permission.tmp")
+        with open(test_file, 'w') as f:
+            f.write("test")
+        os.remove(test_file)
+        logger.info(f"Write permission confirmed for directory: {directory}")
+except Exception as e:
+    logger.warning(f"Permission issue with directories: {e}")
 
 # Authentication token
 AUTH_TOKEN = None
@@ -384,12 +397,100 @@ def client():
         # Save data to file
         save_data(system_id, data)
 
-        # Return a simple HTML page with the collected data
-        return render_template('client.html', system=systems_data[system_id])
+        # Make sure the client.html template exists
+        client_template_path = os.path.join("templates", "client.html")
+        if not os.path.exists(client_template_path):
+            # Create the client.html template if it doesn't exist
+            logger.info(f"Creating client.html template at {client_template_path}")
+            create_template_files()
+
+        try:
+            # Return a simple HTML page with the collected data
+            return render_template('client.html', system=systems_data[system_id])
+        except Exception as template_error:
+            logger.error(f"Error rendering client.html template: {template_error}")
+
+            # Fallback to a simple HTML response if template rendering fails
+            html_response = f"""<!DOCTYPE html>
+<html>
+<head>
+    <title>System Monitor Client - {system_info['hostname']}</title>
+    <style>
+        body {{ font-family: Arial, sans-serif; margin: 20px; }}
+        h1 {{ color: #2c3e50; }}
+        .info-box {{ background-color: #e9ecef; padding: 15px; border-radius: 5px; margin-bottom: 20px; }}
+        table {{ width: 100%; border-collapse: collapse; margin-top: 10px; }}
+        th, td {{ padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }}
+        th {{ background-color: #f2f2f2; }}
+        .button {{ display: inline-block; background-color: #3498db; color: white; padding: 10px 15px;
+                  text-decoration: none; border-radius: 4px; margin-top: 10px; }}
+    </style>
+</head>
+<body>
+    <h1>System Monitor Client: {system_info['hostname']}</h1>
+    <a href="/" class="button">Back to Dashboard</a>
+
+    <div class="info-box">
+        <h2>System Monitoring Information</h2>
+        <p>This page collects system information from your device and sends it to the monitoring server.</p>
+        <p>Your system has been added to the monitoring dashboard with ID: <strong>{system_info['system_id']}</strong></p>
+        <p>Last update: <strong>{systems_data[system_id]['last_update']}</strong></p>
+        <button onclick="window.location.reload()" style="background-color: #4CAF50; color: white; padding: 10px 15px;
+                border: none; border-radius: 4px; cursor: pointer;">Refresh Data</button>
+    </div>
+
+    <h2>System Information</h2>
+    <table>
+        <tr><th>Hostname</th><td>{system_info['hostname']}</td></tr>
+        <tr><th>Platform</th><td>{system_info['platform']} {system_info['platform_release']}</td></tr>
+        <tr><th>Architecture</th><td>{system_info['architecture']}</td></tr>
+        <tr><th>Processor</th><td>{system_info['processor']}</td></tr>
+    </table>
+
+    <h2>CPU Information</h2>
+    <table>
+        <tr><th>CPU Count</th><td>{cpu_info['cpu_count']}</td></tr>
+        <tr><th>CPU Usage</th><td>{cpu_info['cpu_percent']}</td></tr>
+    </table>
+
+    <h2>Memory Information</h2>
+    <table>
+        <tr><th>Total Memory</th><td>{memory_info['virtual_memory']['total']} bytes</td></tr>
+        <tr><th>Available Memory</th><td>{memory_info['virtual_memory']['available']} bytes</td></tr>
+        <tr><th>Used Memory</th><td>{memory_info['virtual_memory']['used']} bytes ({memory_info['virtual_memory']['percent']}%)</td></tr>
+    </table>
+</body>
+</html>"""
+            return html_response
 
     except Exception as e:
         logger.error(f"Error collecting system data: {e}")
-        return jsonify({"error": str(e)}), 500
+        # Return a simple error page
+        error_html = f"""<!DOCTYPE html>
+<html>
+<head>
+    <title>System Monitor Error</title>
+    <style>
+        body {{ font-family: Arial, sans-serif; margin: 20px; }}
+        h1 {{ color: #721c24; }}
+        .error-box {{ background-color: #f8d7da; padding: 15px; border-radius: 5px; margin-bottom: 20px;
+                     border: 1px solid #f5c6cb; color: #721c24; }}
+        .button {{ display: inline-block; background-color: #3498db; color: white; padding: 10px 15px;
+                  text-decoration: none; border-radius: 4px; margin-top: 10px; }}
+    </style>
+</head>
+<body>
+    <h1>System Monitor Error</h1>
+
+    <div class="error-box">
+        <p>An error occurred while collecting system data:</p>
+        <p><strong>{str(e)}</strong></p>
+    </div>
+
+    <a href="/" class="button">Back to Dashboard</a>
+</body>
+</html>"""
+        return error_html
 
 @app.route('/download')
 def download_apk():
@@ -1000,7 +1101,35 @@ def main():
     AUTH_TOKEN = args.auth
 
     # Create template files
-    create_template_files()
+    try:
+        logger.info("Creating template files...")
+        create_template_files()
+        logger.info("Template files created successfully")
+    except Exception as e:
+        logger.error(f"Error creating template files: {e}")
+        # Continue anyway, as we have fallback HTML responses
+
+    # Load existing data
+    try:
+        logger.info("Loading existing system data...")
+        if os.path.exists("data"):
+            for system_dir in os.listdir("data"):
+                system_id = system_dir
+                latest_file = os.path.join("data", system_dir, "latest.json")
+
+                if os.path.exists(latest_file):
+                    with open(latest_file, 'r') as f:
+                        data = json.load(f)
+
+                    systems_data[system_id] = {
+                        "last_update": datetime.now().isoformat(),
+                        "data": data,
+                        "client_type": "web"  # Default to web client
+                    }
+                    logger.info(f"Loaded data for system {system_id}")
+        logger.info(f"Loaded data for {len(systems_data)} systems")
+    except Exception as e:
+        logger.error(f"Error loading existing data: {e}")
 
     logger.info(f"Starting server on port {args.port}")
     app.run(host="0.0.0.0", port=args.port, debug=False)
