@@ -19,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -122,7 +123,7 @@ public class MainActivity extends Activity {
                 String serverUrl = serverUrlEditText.getText().toString();
                 String authToken = authTokenEditText.getText().toString();
                 
-                URL url = new URL(serverUrl + "/api/ping");
+                URL url = new URI(serverUrl + "/api/ping").toURL();
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
                 connection.setRequestProperty("Authorization", "Bearer " + authToken);
@@ -194,7 +195,7 @@ public class MainActivity extends Activity {
                 String serverUrl = serverUrlEditText.getText().toString();
                 String authToken = authTokenEditText.getText().toString();
                 
-                URL url = new URL(serverUrl + "/api/system-data");
+                URL url = new URI(serverUrl + "/api/system-data").toURL();
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setRequestProperty("Content-Type", "application/json");

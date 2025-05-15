@@ -17,6 +17,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -70,7 +71,7 @@ public class MonitorService extends Service {
             JSONObject systemData = SystemDataCollector.collectData(this);
             
             // Send data to server
-            URL url = new URL(serverUrl + "/api/system-data");
+            URL url = new URI(serverUrl + "/api/system-data").toURL();
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Content-Type", "application/json");
