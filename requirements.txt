@@ -1,0 +1,4 @@
+psutil>=5.9.0
+requests>=2.27.1
+flask>=2.0.1
+flask-httpauth>=4.5.0

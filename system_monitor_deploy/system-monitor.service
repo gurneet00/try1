@@ -1,0 +1,13 @@
+[Unit] 
+Description=System Monitor Server 
+After=network.target 
+ 
+[Service] 
+User=root 
+WorkingDirectory=/opt/system-monitor 
+ExecStart=/usr/bin/python3 /opt/system-monitor/server.py --port 5000 --auth default_token_change_me 
+Restart=always 
+RestartSec=10 
+ 
+[Install] 
+WantedBy=multi-user.target 

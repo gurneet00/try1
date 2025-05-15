@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.mobilesystemmonitor">
+
+    <!-- Internet permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    
+    <!-- Device information permissions -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    
+    <!-- Storage permissions -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    
+    <!-- Battery information permissions -->
+    <uses-permission android:name="android.permission.BATTERY_STATS" />
+    
+    <!-- Background execution permissions -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <application
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:theme="@style/AppTheme">
+        
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <!-- Background service for monitoring -->
+        <service
+            android:name=".MonitorService"
+            android:enabled="true"
+            android:exported="false" />
+            
+        <!-- Boot receiver to start monitoring on device boot -->
+        <receiver
+            android:name=".BootReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+    </application>
+</manifest>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>System Monitor Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>System Monitor Dashboard</h1>
+    </header>
+    <main>
+        <h2>Monitored Systems</h2>
+        {% if systems %}
+            <div class="systems-grid">
+                {% for system in systems %}
+                    <div class="system-card">
+                        <h3>{{ system.hostname }}</h3>
+                        <p>ID: {{ system.id }}</p>
+                        <p>Platform: {{ system.platform }}</p>
+                        <p>Last Update: {{ system.last_update }}</p>
+                        <a href="/system/{{ system.id }}" class="button">View Details</a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No systems are currently being monitored.</p>
+        {% endif %}
+    </main>
+    <footer>
+        <p>System Monitor Dashboard</p>
+    </footer>
+</body>
+</html>

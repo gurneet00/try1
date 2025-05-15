@@ -1,0 +1,108 @@
+2025-05-15 11:26:31,714 - SystemMonitorServer - INFO - Starting server on port 5000
+2025-05-15 11:26:31,732 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.44:5000
+2025-05-15 11:26:31,732 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-15 11:38:25,646 - SystemMonitorServer - INFO - Starting server on port 5000
+2025-05-15 11:38:25,664 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.44:5000
+2025-05-15 11:38:25,667 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-15 11:38:35,153 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:38:35] "GET / HTTP/1.1" 200 -
+2025-05-15 11:38:35,197 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:38:35] "GET /static/style.css HTTP/1.1" 200 -
+2025-05-15 11:38:35,415 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:38:35] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-05-15 11:38:46,854 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_113846.json
+2025-05-15 11:38:46,859 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:38:46] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:39:00,233 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:39:00] "GET / HTTP/1.1" 200 -
+2025-05-15 11:39:00,266 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:39:00] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-15 11:39:06,022 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:39:06] "GET / HTTP/1.1" 200 -
+2025-05-15 11:39:06,336 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:39:06] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-15 11:39:09,262 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:39:09] "GET /system/00075acf-9cd7-55f0-9eee-404a2c6baf39 HTTP/1.1" 200 -
+2025-05-15 11:39:09,385 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:39:09] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-15 11:39:09,509 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:39:09] "GET /static/charts.js HTTP/1.1" 200 -
+2025-05-15 11:39:20,360 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_113920.json
+2025-05-15 11:39:20,366 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:39:20] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:39:53,843 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_113953.json
+2025-05-15 11:39:53,848 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:39:53] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:40:27,463 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_114027.json
+2025-05-15 11:40:27,466 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:40:27] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:41:01,041 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_114101.json
+2025-05-15 11:41:01,044 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:41:01] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:41:34,932 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_114134.json
+2025-05-15 11:41:34,938 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:41:34] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:42:08,524 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_114208.json
+2025-05-15 11:42:08,530 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:42:08] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:42:42,059 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_114242.json
+2025-05-15 11:42:42,065 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:42:42] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:43:15,548 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_114315.json
+2025-05-15 11:43:15,551 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:43:15] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:43:49,040 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_114349.json
+2025-05-15 11:43:49,044 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:43:49] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:44:22,492 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_114422.json
+2025-05-15 11:44:22,498 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:44:22] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:44:56,107 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_114456.json
+2025-05-15 11:44:56,110 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:44:56] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:46:18,322 - SystemMonitorServer - INFO - Starting server on port 5000
+2025-05-15 11:46:18,336 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.18.44:5000
+2025-05-15 11:46:18,336 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-15 11:46:27,128 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:46:27] "GET / HTTP/1.1" 200 -
+2025-05-15 11:46:27,194 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:46:27] "GET /static/style.css HTTP/1.1" 200 -
+2025-05-15 11:46:39,325 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_114639.json
+2025-05-15 11:46:39,333 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:46:39] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:46:55,782 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:46:55] "GET / HTTP/1.1" 200 -
+2025-05-15 11:46:56,089 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:46:56] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-15 11:47:11,839 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_114711.json
+2025-05-15 11:47:11,842 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:47:11] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:47:12,821 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_114712.json
+2025-05-15 11:47:12,826 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:47:12] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:47:46,323 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_114746.json
+2025-05-15 11:47:46,326 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:47:46] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:48:19,824 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_114819.json
+2025-05-15 11:48:19,829 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:48:19] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:48:53,374 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_114853.json
+2025-05-15 11:48:53,377 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:48:53] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:48:54,413 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:48:54] "GET /system/00075acf-9cd7-55f0-9eee-404a2c6baf39 HTTP/1.1" 200 -
+2025-05-15 11:48:54,456 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:48:54] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-15 11:48:54,671 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:48:54] "GET /static/charts.js HTTP/1.1" 200 -
+2025-05-15 11:49:26,862 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_114926.json
+2025-05-15 11:49:26,866 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:49:26] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:50:00,354 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_115000.json
+2025-05-15 11:50:00,357 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:50:00] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:50:13,362 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:50:13] "GET / HTTP/1.1" 200 -
+2025-05-15 11:50:13,391 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:50:13] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-15 11:50:33,895 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_115033.json
+2025-05-15 11:50:33,897 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:50:33] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:51:07,421 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_115107.json
+2025-05-15 11:51:07,427 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:51:07] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:51:40,913 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_115140.json
+2025-05-15 11:51:40,917 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:51:40] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:52:11,888 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:52:11] "GET /system/00075acf-9cd7-55f0-9eee-404a2c6baf39 HTTP/1.1" 200 -
+2025-05-15 11:52:12,027 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:52:12] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-15 11:52:12,137 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:52:12] "[36mGET /static/charts.js HTTP/1.1[0m" 304 -
+2025-05-15 11:52:14,477 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_115214.json
+2025-05-15 11:52:14,480 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:52:14] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:52:26,112 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:52:26] "GET /system/00075acf-9cd7-55f0-9eee-404a2c6baf39 HTTP/1.1" 200 -
+2025-05-15 11:52:26,424 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:52:26] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-15 11:52:26,441 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:52:26] "[36mGET /static/charts.js HTTP/1.1[0m" 304 -
+2025-05-15 11:52:48,469 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_115248.json
+2025-05-15 11:52:48,474 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:52:48] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:53:21,995 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_115321.json
+2025-05-15 11:53:22,002 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:53:22] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:53:55,494 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_115355.json
+2025-05-15 11:53:55,499 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:53:55] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 11:54:29,031 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_115429.json
+2025-05-15 11:54:29,036 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 11:54:29] "POST /api/system-data HTTP/1.1" 200 -
+2025-05-15 12:10:18,041 - SystemMonitorServer - INFO - Starting server on port 5000
+2025-05-15 12:10:18,053 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.41:5000
+2025-05-15 12:10:18,053 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-15 12:10:29,765 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 12:10:29] "GET / HTTP/1.1" 200 -
+2025-05-15 12:10:29,905 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 12:10:29] "GET /static/style.css HTTP/1.1" 200 -
+2025-05-15 12:10:35,058 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 12:10:35] "GET /download HTTP/1.1" 200 -
