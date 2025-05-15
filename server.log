@@ -197,3 +197,18 @@
 2025-05-15 15:46:25,006 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 15:46:25] "GET /static/charts.js HTTP/1.1" 200 -
 2025-05-15 15:46:35,846 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 15:46:35] "GET / HTTP/1.1" 200 -
 2025-05-15 15:46:35,860 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 15:46:35] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-15 15:47:15,808 - SystemMonitorServer - INFO - Starting server on port 5000
+2025-05-15 15:47:15,819 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.41:5000
+2025-05-15 15:47:15,819 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-15 15:47:37,270 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 15:47:37] "GET / HTTP/1.1" 200 -
+2025-05-15 15:47:37,304 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 15:47:37] "GET /static/style.css HTTP/1.1" 200 -
+2025-05-15 15:47:43,897 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_154743.json
+2025-05-15 15:47:43,910 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 15:47:43] "GET /client HTTP/1.1" 200 -
+2025-05-15 15:47:43,933 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 15:47:43] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-15 15:47:44,237 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 15:47:44] "GET /static/charts.js HTTP/1.1" 200 -
+2025-05-15 15:47:56,233 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 15:47:56] "GET /system/00075acf-9cd7-55f0-9eee-404a2c6baf39 HTTP/1.1" 200 -
+2025-05-15 15:47:56,337 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 15:47:56] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-15 15:47:56,474 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 15:47:56] "[36mGET /static/charts.js HTTP/1.1[0m" 304 -

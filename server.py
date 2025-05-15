@@ -203,6 +203,25 @@ def index():
     """Main page showing all monitored systems."""
     systems = []
 
+    # Load data from files if systems_data is empty
+    if not systems_data:
+        try:
+            for system_dir in os.listdir("data"):
+                system_id = system_dir
+                latest_file = os.path.join("data", system_dir, "latest.json")
+
+                if os.path.exists(latest_file):
+                    with open(latest_file, 'r') as f:
+                        data = json.load(f)
+
+                    systems_data[system_id] = {
+                        "last_update": datetime.now().isoformat(),
+                        "data": data,
+                        "client_type": "web"  # Default to web client
+                    }
+        except Exception as e:
+            logger.error(f"Error loading data from files: {e}")
+
     for system_id, system_data in systems_data.items():
         client_type = system_data.get("client_type", "desktop")
         systems.append({
