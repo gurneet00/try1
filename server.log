@@ -151,3 +151,25 @@
 2025-05-15 15:23:56,682 - werkzeug - INFO - 192.168.1.41 - - [15/May/2025 15:23:56] "GET /download HTTP/1.1" 200 -
 2025-05-15 15:24:18,379 - SystemMonitorServer - INFO - APK download requested. File size: 8165518 bytes
 2025-05-15 15:24:18,381 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 15:24:18] "GET /download HTTP/1.1" 200 -
+2025-05-15 15:29:42,255 - SystemMonitorServer - INFO - Starting server on port 5000
+2025-05-15 15:29:42,266 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.41:5000
+2025-05-15 15:29:42,266 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-15 15:30:01,550 - SystemMonitorServer - INFO - APK download requested. File size: 37832 bytes
+2025-05-15 15:30:01,551 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 15:30:01] "GET /download HTTP/1.1" 200 -
+2025-05-15 15:34:49,014 - SystemMonitorServer - INFO - Starting server on port 5000
+2025-05-15 15:34:49,027 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.41:5000
+2025-05-15 15:34:49,027 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2025-05-15 15:35:00,921 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 15:35:00] "GET / HTTP/1.1" 200 -
+2025-05-15 15:35:01,079 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 15:35:01] "GET /static/style.css HTTP/1.1" 200 -
+2025-05-15 15:35:08,426 - SystemMonitorServer - INFO - Data saved to data\00075acf-9cd7-55f0-9eee-404a2c6baf39\data_20250515_153508.json
+2025-05-15 15:35:08,451 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 15:35:08] "GET /client HTTP/1.1" 200 -
+2025-05-15 15:35:08,473 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 15:35:08] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2025-05-15 15:35:08,794 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 15:35:08] "GET /static/charts.js HTTP/1.1" 200 -
+2025-05-15 15:35:10,000 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 15:35:09] "GET / HTTP/1.1" 200 -
+2025-05-15 15:35:10,017 - werkzeug - INFO - 127.0.0.1 - - [15/May/2025 15:35:10] "[36mGET /static/style.css HTTP/1.1[0m" 304 -

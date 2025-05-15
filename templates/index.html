@@ -7,8 +7,15 @@
 <body>
     <header>
         <h1>System Monitor Dashboard</h1>
+        <a href="/client" class="button">Monitor This System</a>
     </header>
     <main>
+        <div class="info-box" style="background-color: #e9ecef; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+            <h2>System Monitoring</h2>
+            <p>This dashboard shows all systems being monitored by the System Monitor application.</p>
+            <p>To add your current system to the dashboard, click the "Monitor This System" button above.</p>
+        </div>
+
         <h2>Monitored Systems</h2>
         {% if systems %}
             <div class="systems-grid">
@@ -17,6 +24,7 @@
                         <h3>{{ system.hostname }}</h3>
                         <p>ID: {{ system.id }}</p>
                         <p>Platform: {{ system.platform }}</p>
+                        <p>Client Type: {{ system.client_type }}</p>
                         <p>Last Update: {{ system.last_update }}</p>
                         <a href="/system/{{ system.id }}" class="button">View Details</a>
                     </div>
@@ -24,6 +32,7 @@
             </div>
         {% else %}
             <p>No systems are currently being monitored.</p>
+            <p>Click the "Monitor This System" button to add your current system.</p>
         {% endif %}
     </main>
     <footer>

@@ -246,59 +246,144 @@ def serve_static(path):
     """Serve static files."""
     return send_from_directory('static', path)
 
+@app.route('/client')
+def client():
+    """Endpoint to collect system monitoring information directly from the browser."""
+    try:
+        # Create a SystemMonitor instance to collect data
+        import platform
+        import socket
+        import uuid
+        import psutil
+        from datetime import datetime
+
+        # Generate a system ID for this client
+        try:
+            system_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, socket.gethostname()))
+        except:
+            system_id = str(uuid.uuid4())
+
+        # Collect basic system information
+        system_info = {
+            "timestamp": datetime.now().isoformat(),
+            "system_id": system_id,
+            "hostname": socket.gethostname(),
+            "platform": platform.system(),
+            "platform_release": platform.release(),
+            "platform_version": platform.version(),
+            "architecture": platform.machine(),
+            "processor": platform.processor(),
+            "boot_time": datetime.fromtimestamp(psutil.boot_time()).isoformat()
+        }
+
+        # Collect CPU information
+        cpu_info = {
+            "cpu_percent": psutil.cpu_percent(interval=1, percpu=True),
+            "cpu_count": psutil.cpu_count(logical=True),
+            "cpu_stats": dict(psutil.cpu_stats()._asdict()),
+            "cpu_freq": dict(psutil.cpu_freq()._asdict()) if psutil.cpu_freq() else None,
+        }
+
+        # Collect memory information
+        virtual_mem = psutil.virtual_memory()
+        swap_mem = psutil.swap_memory()
+
+        memory_info = {
+            "virtual_memory": {
+                "total": virtual_mem.total,
+                "available": virtual_mem.available,
+                "used": virtual_mem.used,
+                "percent": virtual_mem.percent
+            },
+            "swap_memory": {
+                "total": swap_mem.total,
+                "used": swap_mem.used,
+                "free": swap_mem.free,
+                "percent": swap_mem.percent
+            }
+        }
+
+        # Collect disk information
+        disk_info = {
+            "partitions": [],
+            "io_counters": dict(psutil.disk_io_counters(perdisk=False)._asdict()) if psutil.disk_io_counters() else None
+        }
+
+        for partition in psutil.disk_partitions():
+            partition_info = dict(partition._asdict())
+            try:
+                usage = psutil.disk_usage(partition.mountpoint)
+                partition_info["usage"] = {
+                    "total": usage.total,
+                    "used": usage.used,
+                    "free": usage.free,
+                    "percent": usage.percent
+                }
+            except PermissionError:
+                partition_info["usage"] = None
+
+            disk_info["partitions"].append(partition_info)
+
+        # Collect network information
+        network_info = {
+            "io_counters": dict(psutil.net_io_counters()._asdict()),
+            "interfaces": {}
+        }
+
+        # Get network interfaces
+        for interface_name, addresses in psutil.net_if_addrs().items():
+            network_info["interfaces"][interface_name] = [dict(addr._asdict()) for addr in addresses]
+
+        # Collect process information (top 10 by CPU usage)
+        processes = []
+        for proc in sorted(psutil.process_iter(['pid', 'name', 'username', 'cpu_percent', 'memory_percent']),
+                          key=lambda p: p.info['cpu_percent'] or 0, reverse=True)[:10]:
+            try:
+                proc_info = proc.info
+                proc_info['create_time'] = datetime.fromtimestamp(proc.create_time()).isoformat()
+                processes.append(proc_info)
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                pass
+
+        # Combine all data
+        data = {
+            "system_info": system_info,
+            "cpu_info": cpu_info,
+            "memory_info": memory_info,
+            "disk_info": disk_info,
+            "network_info": network_info,
+            "process_info": processes
+        }
+
+        # Save the collected data
+        systems_data[system_id] = {
+            "last_update": datetime.now().isoformat(),
+            "data": data,
+            "client_type": "web"
+        }
+
+        # Save data to file
+        save_data(system_id, data)
+
+        # Return a simple HTML page with the collected data
+        return render_template('client.html', system=systems_data[system_id])
+
+    except Exception as e:
+        logger.error(f"Error collecting system data: {e}")
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/download')
 def download_apk():
     """Download the mobile APK file or show instructions."""
     try:
-        # Create downloads directory if it doesn't exist
-        os.makedirs('downloads', exist_ok=True)
-
-        # Path to the APK file
-        apk_path = os.path.join('downloads', 'MobileSystemMonitor.apk')
-
         # Path to the instructions HTML file
         instructions_path = os.path.join('downloads', 'mobile_instructions.html')
 
-        # Check if we have a valid APK
-        if os.path.exists(apk_path) and os.path.getsize(apk_path) > 0:
-            # Log the download request
-            logger.info(f"APK download requested. File size: {os.path.getsize(apk_path)} bytes")
-
-            # Return the APK file as an attachment
-            return send_from_directory(
-                'downloads',
-                'MobileSystemMonitor.apk',
-                as_attachment=True,
-                mimetype='application/vnd.android.package-archive'
-            )
-        else:
-            # If no valid APK exists, try to build it
-            logger.warning("APK file not found or empty. Attempting to build it...")
-
-            try:
-                # Check if we have the build script
-                if os.path.exists('build_apk.bat'):
-                    import subprocess
-                    result = subprocess.run(['build_apk.bat'], capture_output=True, text=True)
-
-                    if result.returncode == 0 and os.path.exists(apk_path) and os.path.getsize(apk_path) > 0:
-                        logger.info(f"Successfully built APK. File size: {os.path.getsize(apk_path)} bytes")
-                        return send_from_directory(
-                            'downloads',
-                            'MobileSystemMonitor.apk',
-                            as_attachment=True,
-                            mimetype='application/vnd.android.package-archive'
-                        )
-                    else:
-                        logger.error(f"Failed to build APK: {result.stderr}")
-            except Exception as e:
-                logger.error(f"Error building APK: {e}")
-
-            # If we still don't have an APK, serve the instructions page
-            if not os.path.exists(instructions_path):
-                # Create a basic instructions file
-                with open(instructions_path, 'w') as f:
-                    f.write("""<!DOCTYPE html>
+        # If we don't have an APK, serve the instructions page
+        if not os.path.exists(instructions_path):
+            # Create a basic instructions file
+            with open(instructions_path, 'w') as f:
+                f.write("""<!DOCTYPE html>
 <html>
 <head>
     <title>Mobile System Monitor - Installation Instructions</title>
@@ -315,38 +400,30 @@ def download_apk():
         <h1>Mobile System Monitor - Installation Instructions</h1>
 
         <div class="note">
-            <strong>Note:</strong> The APK file is not currently available for download. Please contact the administrator or build it manually.
+            <strong>Note:</strong> The APK file is not currently available for download. Please use the /client endpoint for system monitoring.
         </div>
 
-        <h2>Building the APK Manually</h2>
+        <h2>Using the Web Client</h2>
+        <p>You can now use the web client to monitor your system:</p>
         <ol>
-            <li>Clone the repository: <code>git clone https://github.com/yourusername/system-monitor.git</code></li>
-            <li>Navigate to the project directory: <code>cd system-monitor</code></li>
-            <li>Run the build script: <code>build_apk.bat</code></li>
-            <li>The APK will be available at: <code>downloads/MobileSystemMonitor.apk</code></li>
+            <li>Navigate to <code>/client</code> in your web browser</li>
+            <li>The system information will be collected and displayed</li>
+            <li>Your system will be added to the monitoring dashboard</li>
         </ol>
 
-        <h2>Installing on Your Device</h2>
-        <ol>
-            <li>Enable "Install from Unknown Sources" in your device settings</li>
-            <li>Transfer the APK to your device</li>
-            <li>Open the APK on your device to install</li>
-        </ol>
-
-        <h2>Configuring the App</h2>
-        <ol>
-            <li>Open the app after installation</li>
-            <li>Enter the server URL: <code>http://your-server-ip:5000</code></li>
-            <li>Enter your authentication token</li>
-            <li>Test the connection</li>
-            <li>Enable monitoring as needed</li>
-        </ol>
+        <h2>API Endpoints</h2>
+        <ul>
+            <li><code>/</code> - Main dashboard showing all monitored systems</li>
+            <li><code>/client</code> - Web client for collecting system information</li>
+            <li><code>/system/{system_id}</code> - Detailed view of a specific system</li>
+            <li><code>/api/system-data</code> - API endpoint for sending system data (requires authentication)</li>
+        </ul>
     </div>
 </body>
 </html>""")
 
-            # Return the instructions HTML page
-            return send_from_directory('downloads', 'mobile_instructions.html')
+        # Return the instructions HTML page
+        return send_from_directory('downloads', 'mobile_instructions.html')
 
     except Exception as e:
         logger.error(f"Error serving mobile app download: {e}")
@@ -364,8 +441,15 @@ def create_template_files():
 <body>
     <header>
         <h1>System Monitor Dashboard</h1>
+        <a href="/client" class="button">Monitor This System</a>
     </header>
     <main>
+        <div class="info-box" style="background-color: #e9ecef; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+            <h2>System Monitoring</h2>
+            <p>This dashboard shows all systems being monitored by the System Monitor application.</p>
+            <p>To add your current system to the dashboard, click the "Monitor This System" button above.</p>
+        </div>
+
         <h2>Monitored Systems</h2>
         {% if systems %}
             <div class="systems-grid">
@@ -374,6 +458,7 @@ def create_template_files():
                         <h3>{{ system.hostname }}</h3>
                         <p>ID: {{ system.id }}</p>
                         <p>Platform: {{ system.platform }}</p>
+                        <p>Client Type: {{ system.client_type }}</p>
                         <p>Last Update: {{ system.last_update }}</p>
                         <a href="/system/{{ system.id }}" class="button">View Details</a>
                     </div>
@@ -381,6 +466,7 @@ def create_template_files():
             </div>
         {% else %}
             <p>No systems are currently being monitored.</p>
+            <p>Click the "Monitor This System" button to add your current system.</p>
         {% endif %}
     </main>
     <footer>

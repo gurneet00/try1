@@ -1,8 +1,8 @@
-export default {
+module.exports = {
   apps: [{
     name: "system-monitor",
     script: "server.py",
-    interpreter: "python3",
+    interpreter: "python",
     args: "--port 5000 --auth default_token_change_me",
     watch: false,
     instances: 1,
@@ -12,6 +12,9 @@ export default {
       NODE_ENV: "production",
       PYTHONUNBUFFERED: "true"
     },
-    log_date_format: "YYYY-MM-DD HH:mm:ss Z"
+    log_date_format: "YYYY-MM-DD HH:mm:ss Z",
+    error_file: "logs/system-monitor-error.log",
+    out_file: "logs/system-monitor-out.log",
+    merge_logs: true
   }]
 }

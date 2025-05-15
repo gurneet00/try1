@@ -20,9 +20,9 @@ REM Create directories
 echo Creating directories...
 mkdir downloads 2>nul
 
-REM Use the APK download script
-echo Downloading a valid APK...
-python download_sample_apk.py
+REM Use the WebView APK creation script
+echo Creating a WebView-based APK...
+python create_webview_apk.py
 
 REM Check if build was successful
 if %ERRORLEVEL% NEQ 0 (
