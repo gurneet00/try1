@@ -106,6 +106,40 @@ def receive_system_data():
         system_id = data['deviceId']
         client_type = 'mobile'
 
+        # Get CPU info from the enhanced data if available
+        cpu_info = {}
+        if 'cpuInfo' in data:
+            cpu_percent = data['cpuInfo'].get('usage', 0)
+            cpu_count = data['cpuInfo'].get('processorCount', 1)
+            cpu_model = data['cpuInfo'].get('model', 'Unknown')
+            cpu_info = {
+                'cpu_percent': [cpu_percent],
+                'cpu_count': cpu_count,
+                'cpu_model': cpu_model,
+                'cpu_user_percent': data['cpuInfo'].get('userUsage', 0),
+                'cpu_system_percent': data['cpuInfo'].get('systemUsage', 0),
+                'cpu_idle_percent': data['cpuInfo'].get('idleUsage', 0)
+            }
+        else:
+            # Fallback for older clients
+            cpu_info = {
+                'cpu_percent': [50],  # Default value
+                'cpu_count': 1,
+            }
+
+        # Get process info if available
+        process_info = []
+        if 'processInfo' in data and 'topProcesses' in data['processInfo']:
+            for proc in data['processInfo'].get('topProcesses', []):
+                process_info.append({
+                    'pid': proc.get('pid', 0),
+                    'name': proc.get('processName', 'Unknown'),
+                    'username': 'mobile',
+                    'cpu_percent': 0,  # Not available in mobile data
+                    'memory_percent': 0,  # Not available in mobile data
+                    'create_time': data.get('timestamp', datetime.now().isoformat())
+                })
+
         # Transform mobile data to match our storage format
         data = {
             'system_info': {
@@ -117,10 +151,8 @@ def receive_system_data():
                 'processor': data['deviceInfo'].get('manufacturer', '') + ' ' + data['deviceInfo'].get('model', ''),
                 'boot_time': data.get('timestamp', datetime.now().isoformat())
             },
-            'cpu_info': {
-                'cpu_percent': [50],  # Mobile devices don't typically provide CPU usage per core
-                'cpu_count': 1,
-            },
+            'cpu_info': cpu_info,
+            'process_info': process_info,
             'memory_info': {
                 'virtual_memory': {
                     'total': data['memoryInfo'].get('total', 0),
@@ -228,7 +260,10 @@ def download_apk():
         instructions_path = os.path.join('downloads', 'mobile_instructions.html')
 
         # Check if we have a valid APK
-        if os.path.exists(apk_path) and os.path.getsize(apk_path) > 0:  # Any size is acceptable for demo
+        if os.path.exists(apk_path) and os.path.getsize(apk_path) > 0:
+            # Log the download request
+            logger.info(f"APK download requested. File size: {os.path.getsize(apk_path)} bytes")
+
             # Return the APK file as an attachment
             return send_from_directory(
                 'downloads',
@@ -237,10 +272,78 @@ def download_apk():
                 mimetype='application/vnd.android.package-archive'
             )
         else:
-            # If no valid APK exists, serve the instructions page
+            # If no valid APK exists, try to build it
+            logger.warning("APK file not found or empty. Attempting to build it...")
+
+            try:
+                # Check if we have the build script
+                if os.path.exists('build_apk.bat'):
+                    import subprocess
+                    result = subprocess.run(['build_apk.bat'], capture_output=True, text=True)
+
+                    if result.returncode == 0 and os.path.exists(apk_path) and os.path.getsize(apk_path) > 0:
+                        logger.info(f"Successfully built APK. File size: {os.path.getsize(apk_path)} bytes")
+                        return send_from_directory(
+                            'downloads',
+                            'MobileSystemMonitor.apk',
+                            as_attachment=True,
+                            mimetype='application/vnd.android.package-archive'
+                        )
+                    else:
+                        logger.error(f"Failed to build APK: {result.stderr}")
+            except Exception as e:
+                logger.error(f"Error building APK: {e}")
+
+            # If we still don't have an APK, serve the instructions page
             if not os.path.exists(instructions_path):
-                logger.warning(f"Instructions file not found at {instructions_path}.")
-                return "Mobile app installation instructions are not available. Please contact the administrator.", 404
+                # Create a basic instructions file
+                with open(instructions_path, 'w') as f:
+                    f.write("""<!DOCTYPE html>
+<html>
+<head>
+    <title>Mobile System Monitor - Installation Instructions</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+        h1 { color: #2c3e50; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .note { background-color: #f8f9fa; padding: 15px; border-left: 4px solid #007bff; margin-bottom: 20px; }
+        code { background-color: #f1f1f1; padding: 2px 5px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Mobile System Monitor - Installation Instructions</h1>
+
+        <div class="note">
+            <strong>Note:</strong> The APK file is not currently available for download. Please contact the administrator or build it manually.
+        </div>
+
+        <h2>Building the APK Manually</h2>
+        <ol>
+            <li>Clone the repository: <code>git clone https://github.com/yourusername/system-monitor.git</code></li>
+            <li>Navigate to the project directory: <code>cd system-monitor</code></li>
+            <li>Run the build script: <code>build_apk.bat</code></li>
+            <li>The APK will be available at: <code>downloads/MobileSystemMonitor.apk</code></li>
+        </ol>
+
+        <h2>Installing on Your Device</h2>
+        <ol>
+            <li>Enable "Install from Unknown Sources" in your device settings</li>
+            <li>Transfer the APK to your device</li>
+            <li>Open the APK on your device to install</li>
+        </ol>
+
+        <h2>Configuring the App</h2>
+        <ol>
+            <li>Open the app after installation</li>
+            <li>Enter the server URL: <code>http://your-server-ip:5000</code></li>
+            <li>Enter your authentication token</li>
+            <li>Test the connection</li>
+            <li>Enable monitoring as needed</li>
+        </ol>
+    </div>
+</body>
+</html>""")
 
             # Return the instructions HTML page
             return send_from_directory('downloads', 'mobile_instructions.html')
