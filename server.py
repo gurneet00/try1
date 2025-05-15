@@ -614,6 +614,192 @@ def create_template_files():
 </body>
 </html>"""
 
+    # Create client.html
+    client_html = """<!DOCTYPE html>
+<html>
+<head>
+    <title>System Monitor Client - {{ system.data.system_info.hostname }}</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="/static/charts.js"></script>
+    <style>
+        .refresh-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        .refresh-button:hover {
+            background-color: #45a049;
+        }
+        .status-message {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info-box {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>System Monitor Client: {{ system.data.system_info.hostname }}</h1>
+        <a href="/" class="button">Back to Dashboard</a>
+    </header>
+    <main>
+        <div class="info-box">
+            <h2>System Monitoring Information</h2>
+            <p>This page collects system information from your device and sends it to the monitoring server.</p>
+            <p>Your system has been added to the monitoring dashboard with ID: <strong>{{ system.data.system_info.system_id }}</strong></p>
+            <p>Last update: <strong>{{ system.last_update }}</strong></p>
+            <button class="refresh-button" onclick="window.location.reload()">Refresh Data</button>
+            <div id="status-message" class="status-message success">
+                Data collected and sent successfully!
+            </div>
+        </div>
+
+        <div class="system-details">
+            <section class="card">
+                <h2>System Information</h2>
+                <table>
+                    <tr><th>Hostname</th><td>{{ system.data.system_info.hostname }}</td></tr>
+                    <tr><th>Platform</th><td>{{ system.data.system_info.platform }} {{ system.data.system_info.platform_release }}</td></tr>
+                    <tr><th>Architecture</th><td>{{ system.data.system_info.architecture }}</td></tr>
+                    <tr><th>Processor</th><td>{{ system.data.system_info.processor }}</td></tr>
+                    <tr><th>Boot Time</th><td>{{ system.data.system_info.boot_time }}</td></tr>
+                    <tr><th>Last Update</th><td>{{ system.last_update }}</td></tr>
+                </table>
+            </section>
+
+            <section class="card">
+                <h2>CPU Information</h2>
+                <div class="chart-container">
+                    <canvas id="cpuChart"></canvas>
+                </div>
+                <table>
+                    <tr><th>CPU Count</th><td>{{ system.data.cpu_info.cpu_count }}</td></tr>
+                    <tr><th>CPU Usage</th><td>{{ system.data.cpu_info.cpu_percent }}</td></tr>
+                </table>
+            </section>
+
+            <section class="card">
+                <h2>Memory Information</h2>
+                <div class="chart-container">
+                    <canvas id="memoryChart"></canvas>
+                </div>
+                <table>
+                    <tr><th>Total Memory</th><td>{{ system.data.memory_info.virtual_memory.total | filesizeformat }}</td></tr>
+                    <tr><th>Available Memory</th><td>{{ system.data.memory_info.virtual_memory.available | filesizeformat }}</td></tr>
+                    <tr><th>Used Memory</th><td>{{ system.data.memory_info.virtual_memory.used | filesizeformat }} ({{ system.data.memory_info.virtual_memory.percent }}%)</td></tr>
+                </table>
+            </section>
+
+            <section class="card">
+                <h2>Disk Information</h2>
+                <table>
+                    <tr>
+                        <th>Device</th>
+                        <th>Mountpoint</th>
+                        <th>File System</th>
+                        <th>Total</th>
+                        <th>Used</th>
+                        <th>Free</th>
+                        <th>Usage</th>
+                    </tr>
+                    {% for partition in system.data.disk_info.partitions %}
+                        {% if partition.usage %}
+                        <tr>
+                            <td>{{ partition.device }}</td>
+                            <td>{{ partition.mountpoint }}</td>
+                            <td>{{ partition.fstype }}</td>
+                            <td>{{ partition.usage.total | filesizeformat }}</td>
+                            <td>{{ partition.usage.used | filesizeformat }}</td>
+                            <td>{{ partition.usage.free | filesizeformat }}</td>
+                            <td>{{ partition.usage.percent }}%</td>
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                </table>
+            </section>
+
+            <section class="card">
+                <h2>Network Information</h2>
+                <table>
+                    <tr>
+                        <th>Bytes Sent</th>
+                        <td>{{ system.data.network_info.io_counters.bytes_sent | filesizeformat }}</td>
+                    </tr>
+                    <tr>
+                        <th>Bytes Received</th>
+                        <td>{{ system.data.network_info.io_counters.bytes_recv | filesizeformat }}</td>
+                    </tr>
+                </table>
+            </section>
+
+            <section class="card">
+                <h2>Top Processes</h2>
+                <table>
+                    <tr>
+                        <th>PID</th>
+                        <th>Name</th>
+                        <th>Username</th>
+                        <th>CPU %</th>
+                        <th>Memory %</th>
+                        <th>Created</th>
+                    </tr>
+                    {% for process in system.data.process_info %}
+                    <tr>
+                        <td>{{ process.pid }}</td>
+                        <td>{{ process.name }}</td>
+                        <td>{{ process.username }}</td>
+                        <td>{{ process.cpu_percent }}</td>
+                        <td>{{ process.memory_percent }}</td>
+                        <td>{{ process.create_time }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </section>
+        </div>
+    </main>
+    <footer>
+        <p>System Monitor Dashboard</p>
+    </footer>
+
+    <script>
+        // Initialize charts with system data
+        document.addEventListener('DOMContentLoaded', function() {
+            // CPU Chart
+            const cpuData = {{ system.data.cpu_info.cpu_percent | tojson }};
+            createCpuChart('cpuChart', cpuData);
+
+            // Memory Chart
+            const memoryData = {
+                used: {{ system.data.memory_info.virtual_memory.used }},
+                available: {{ system.data.memory_info.virtual_memory.available }}
+            };
+            createMemoryChart('memoryChart', memoryData);
+        });
+    </script>
+</body>
+</html>"""
+
     # Create style.css
     style_css = """body {
     font-family: Arial, sans-serif;
@@ -774,6 +960,9 @@ function createMemoryChart(canvasId, memoryData) {
 
     with open(os.path.join("templates", "system.html"), 'w') as f:
         f.write(system_html)
+
+    with open(os.path.join("templates", "client.html"), 'w') as f:
+        f.write(client_html)
 
     with open(os.path.join("static", "style.css"), 'w') as f:
         f.write(style_css)
