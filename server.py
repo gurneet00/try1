@@ -217,7 +217,7 @@ def serve_static(path):
 
 @app.route('/download')
 def download_apk():
-    """Download the mobile APK file."""
+    """Download the mobile APK file or show instructions."""
     try:
         # Create downloads directory if it doesn't exist
         os.makedirs('downloads', exist_ok=True)
@@ -225,22 +225,29 @@ def download_apk():
         # Path to the APK file
         apk_path = os.path.join('downloads', 'MobileSystemMonitor.apk')
 
-        # Check if APK exists, if not create a placeholder
-        if not os.path.exists(apk_path):
-            logger.warning(f"APK file not found at {apk_path}. Creating placeholder.")
-            # This is just a placeholder. In production, you should have the actual APK file.
-            with open(apk_path, 'wb') as f:
-                f.write(b'This is a placeholder for the APK file.')
+        # Path to the instructions HTML file
+        instructions_path = os.path.join('downloads', 'mobile_instructions.html')
 
-        # Return the file as an attachment
-        return send_from_directory(
-            'downloads',
-            'MobileSystemMonitor.apk',
-            as_attachment=True,
-            mimetype='application/vnd.android.package-archive'
-        )
+        # Check if we have a valid APK
+        if os.path.exists(apk_path) and os.path.getsize(apk_path) > 1000000:  # APK should be at least 1MB
+            # Return the APK file as an attachment
+            return send_from_directory(
+                'downloads',
+                'MobileSystemMonitor.apk',
+                as_attachment=True,
+                mimetype='application/vnd.android.package-archive'
+            )
+        else:
+            # If no valid APK exists, serve the instructions page
+            if not os.path.exists(instructions_path):
+                logger.warning(f"Instructions file not found at {instructions_path}.")
+                return "Mobile app installation instructions are not available. Please contact the administrator.", 404
+
+            # Return the instructions HTML page
+            return send_from_directory('downloads', 'mobile_instructions.html')
+
     except Exception as e:
-        logger.error(f"Error serving APK file: {e}")
+        logger.error(f"Error serving mobile app download: {e}")
         abort(500)
 
 def create_template_files():
