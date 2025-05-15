@@ -21,8 +21,8 @@ echo Creating directories...
 mkdir downloads 2>nul
 
 REM Use the APK download script
-echo Downloading and customizing a valid APK...
-python download_valid_apk.py
+echo Downloading a valid APK...
+python download_sample_apk.py
 
 REM Check if build was successful
 if %ERRORLEVEL% NEQ 0 (
