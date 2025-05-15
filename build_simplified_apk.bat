@@ -9,44 +9,35 @@ if %ERRORLEVEL% NEQ 0 (
     exit /b 1
 )
 
-REM Navigate to the simplified project directory
-cd mobile\simplified
+REM Check if Python is installed
+where python >nul 2>nul
+if %ERRORLEVEL% NEQ 0 (
+    echo Python is not installed. Please install Python and try again.
+    exit /b 1
+)
 
-REM Create a dummy APK file for demonstration
-echo Creating a dummy APK file...
-mkdir -p ..\..\downloads
-echo ^<?xml version="1.0" encoding="utf-8"?^> > ..\..\downloads\MobileSystemMonitor.apk
-echo ^<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.mobilesystemmonitor"^> >> ..\..\downloads\MobileSystemMonitor.apk
-echo     ^<application android:label="Mobile System Monitor"^> >> ..\..\downloads\MobileSystemMonitor.apk
-echo         ^<activity android:name=".MainActivity"^> >> ..\..\downloads\MobileSystemMonitor.apk
-echo             ^<intent-filter^> >> ..\..\downloads\MobileSystemMonitor.apk
-echo                 ^<action android:name="android.intent.action.MAIN" /^> >> ..\..\downloads\MobileSystemMonitor.apk
-echo                 ^<category android:name="android.intent.category.LAUNCHER" /^> >> ..\..\downloads\MobileSystemMonitor.apk
-echo             ^</intent-filter^> >> ..\..\downloads\MobileSystemMonitor.apk
-echo         ^</activity^> >> ..\..\downloads\MobileSystemMonitor.apk
-echo     ^</application^> >> ..\..\downloads\MobileSystemMonitor.apk
-echo ^</manifest^> >> ..\..\downloads\MobileSystemMonitor.apk
+REM Create directories
+echo Creating directories...
+mkdir downloads 2>nul
 
-REM Create a proper APK structure
-echo Creating APK structure...
-mkdir -p ..\..\downloads\MobileSystemMonitor
-mkdir -p ..\..\downloads\MobileSystemMonitor\META-INF
-mkdir -p ..\..\downloads\MobileSystemMonitor\classes
-mkdir -p ..\..\downloads\MobileSystemMonitor\res
+REM Use the APK download script
+echo Downloading and customizing a valid APK...
+python download_valid_apk.py
 
-REM Copy Java files to the APK structure
-echo Copying Java files...
-copy app\src\main\java\com\mobilesystemmonitor\*.java ..\..\downloads\MobileSystemMonitor\classes\
-
-REM Create a proper APK file
-echo Creating proper APK file...
-cd ..\..\downloads
-jar -cfM MobileSystemMonitor.apk -C MobileSystemMonitor .
+REM Check if build was successful
+if %ERRORLEVEL% NEQ 0 (
+    echo Failed to build APK.
+    exit /b 1
+)
 
 echo.
-echo Build completed!
+echo Build completed successfully!
 echo The APK is available at: downloads\MobileSystemMonitor.apk
 echo.
-echo Note: This is a simplified APK for demonstration purposes.
-echo For a production-ready APK, please use Android Studio to build the project.
+echo Features:
+echo - Collects comprehensive system data (CPU, memory, battery, storage, network, etc.)
+echo - Sends data to monitoring server in real-time
+echo - Stores data locally when offline and syncs when connection is restored
+echo - Adjustable update intervals
+echo - Background monitoring with battery optimization
 echo.
