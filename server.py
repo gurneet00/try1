@@ -48,8 +48,7 @@ auth = HTTPTokenAuth(scheme="Bearer")
 # In a production environment, you would use a database
 systems_data = {}
 
-# Create directories for data storage
-os.makedirs("data", exist_ok=True)
+# Create directories for templates and static files
 os.makedirs("templates", exist_ok=True)
 os.makedirs("static", exist_ok=True)
 os.makedirs("downloads", exist_ok=True)
@@ -57,7 +56,7 @@ os.makedirs("downloads", exist_ok=True)
 # Ensure we have write permissions to these directories
 try:
     # Test write permissions by creating and removing a test file
-    for directory in ["data", "templates", "static", "downloads"]:
+    for directory in ["templates", "static", "downloads"]:
         test_file = os.path.join(directory, "test_write_permission.tmp")
         with open(test_file, 'w') as f:
             f.write("test")
@@ -77,26 +76,14 @@ def verify_token(token):
     return None
 
 def save_data(system_id, data):
-    """Save system data to a file."""
+    """
+    This function has been modified to not save data to disk.
+    It only logs that data was received.
+    """
     try:
-        # Create a directory for this system if it doesn't exist
-        system_dir = os.path.join("data", system_id)
-        os.makedirs(system_dir, exist_ok=True)
-
-        # Save the data to a timestamped file
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = os.path.join(system_dir, f"data_{timestamp}.json")
-
-        with open(filename, 'w') as f:
-            json.dump(data, f)
-
-        logger.info(f"Data saved to {filename}")
-
-        # Also save as latest.json for quick access
-        with open(os.path.join(system_dir, "latest.json"), 'w') as f:
-            json.dump(data, f)
+        logger.info(f"Received data from system {system_id} (not saving to disk)")
     except Exception as e:
-        logger.error(f"Error saving data: {e}")
+        logger.error(f"Error processing data: {e}")
 
 @app.route('/api/ping', methods=['GET'])
 @auth.login_required
@@ -200,14 +187,15 @@ def receive_system_data():
     else:
         return jsonify({"error": "Invalid data format"}), 400
 
+    # Store the data in memory only (not saving to disk)
     systems_data[system_id] = {
         "last_update": datetime.now().isoformat(),
         "data": data,
         "client_type": client_type
     }
 
-    # Save data to file
-    save_data(system_id, data)
+    # Log that we received data (but don't save it)
+    logger.info(f"Received live data from {client_type} client for system {system_id}")
 
     return jsonify({"status": "success"})
 
@@ -216,25 +204,7 @@ def index():
     """Main page showing all monitored systems."""
     systems = []
 
-    # Load data from files if systems_data is empty
-    if not systems_data:
-        try:
-            for system_dir in os.listdir("data"):
-                system_id = system_dir
-                latest_file = os.path.join("data", system_dir, "latest.json")
-
-                if os.path.exists(latest_file):
-                    with open(latest_file, 'r') as f:
-                        data = json.load(f)
-
-                    systems_data[system_id] = {
-                        "last_update": datetime.now().isoformat(),
-                        "data": data,
-                        "client_type": "web"  # Default to web client
-                    }
-        except Exception as e:
-            logger.error(f"Error loading data from files: {e}")
-
+    # Only use in-memory data (no loading from files)
     for system_id, system_data in systems_data.items():
         client_type = system_data.get("client_type", "desktop")
         systems.append({
@@ -252,24 +222,8 @@ def index():
 def system_details(system_id):
     """Page showing detailed information for a specific system."""
     if system_id not in systems_data:
-        # Try to load from file
-        try:
-            system_dir = os.path.join("data", system_id)
-            latest_file = os.path.join(system_dir, "latest.json")
-
-            if os.path.exists(latest_file):
-                with open(latest_file, 'r') as f:
-                    data = json.load(f)
-
-                systems_data[system_id] = {
-                    "last_update": datetime.now().isoformat(),
-                    "data": data
-                }
-            else:
-                abort(404)
-        except Exception as e:
-            logger.error(f"Error loading data for system {system_id}: {e}")
-            abort(404)
+        # System not found in memory (and we're not loading from files)
+        abort(404)
 
     return render_template('system.html', system=systems_data[system_id])
 
@@ -286,8 +240,48 @@ def client():
         import platform
         import socket
         import uuid
-        import psutil
         from datetime import datetime
+
+        # Try to import psutil, but provide a fallback if it's not available
+        try:
+            import psutil
+            psutil_available = True
+        except ImportError:
+            psutil_available = False
+            logger.error("psutil module not available. Install it with: pip install psutil")
+            # Return a simple error page with installation instructions
+            error_html = """<!DOCTYPE html>
+<html>
+<head>
+    <title>System Monitor Error</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #721c24; }
+        .error-box { background-color: #f8d7da; padding: 15px; border-radius: 5px; margin-bottom: 20px;
+                     border: 1px solid #f5c6cb; color: #721c24; }
+        .code { background-color: #f1f1f1; padding: 10px; border-radius: 4px; font-family: monospace; }
+        .button { display: inline-block; background-color: #3498db; color: white; padding: 10px 15px;
+                  text-decoration: none; border-radius: 4px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>System Monitor Error</h1>
+
+    <div class="error-box">
+        <p>The <strong>psutil</strong> module is required but not installed.</p>
+        <p>Please install it using one of the following commands:</p>
+
+        <div class="code">pip install psutil</div>
+        <p>or</p>
+        <div class="code">python -m pip install psutil</div>
+
+        <p>After installing, restart the server and try again.</p>
+    </div>
+
+    <a href="/" class="button">Back to Dashboard</a>
+</body>
+</html>"""
+            return error_html
 
         # Generate a system ID for this client
         try:
@@ -387,15 +381,15 @@ def client():
             "process_info": processes
         }
 
-        # Save the collected data
+        # Store the data in memory only (not saving to disk)
         systems_data[system_id] = {
             "last_update": datetime.now().isoformat(),
             "data": data,
             "client_type": "web"
         }
 
-        # Save data to file
-        save_data(system_id, data)
+        # Log that we received data (but don't save it)
+        logger.info(f"Received live data from system {system_id}")
 
         # Make sure the client.html template exists
         client_template_path = os.path.join("templates", "client.html")
@@ -565,8 +559,9 @@ def create_template_files():
     </header>
     <main>
         <div class="info-box" style="background-color: #e9ecef; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-            <h2>System Monitoring</h2>
-            <p>This dashboard shows all systems being monitored by the System Monitor application.</p>
+            <h2>Live System Monitoring</h2>
+            <p>This dashboard shows all systems currently being monitored in real-time.</p>
+            <p>Data is not stored permanently - only the current state is displayed.</p>
             <p>To add your current system to the dashboard, click the "Monitor This System" button above.</p>
         </div>
 
@@ -1109,27 +1104,9 @@ def main():
         logger.error(f"Error creating template files: {e}")
         # Continue anyway, as we have fallback HTML responses
 
-    # Load existing data
-    try:
-        logger.info("Loading existing system data...")
-        if os.path.exists("data"):
-            for system_dir in os.listdir("data"):
-                system_id = system_dir
-                latest_file = os.path.join("data", system_dir, "latest.json")
-
-                if os.path.exists(latest_file):
-                    with open(latest_file, 'r') as f:
-                        data = json.load(f)
-
-                    systems_data[system_id] = {
-                        "last_update": datetime.now().isoformat(),
-                        "data": data,
-                        "client_type": "web"  # Default to web client
-                    }
-                    logger.info(f"Loaded data for system {system_id}")
-        logger.info(f"Loaded data for {len(systems_data)} systems")
-    except Exception as e:
-        logger.error(f"Error loading existing data: {e}")
+    # Clear any existing data (we're only showing live data)
+    systems_data.clear()
+    logger.info("Live monitoring mode: Only showing current data, not loading or storing historical data")
 
     logger.info(f"Starting server on port {args.port}")
     app.run(host="0.0.0.0", port=args.port, debug=False)
