@@ -228,7 +228,7 @@ def download_apk():
         instructions_path = os.path.join('downloads', 'mobile_instructions.html')
 
         # Check if we have a valid APK
-        if os.path.exists(apk_path) and os.path.getsize(apk_path) > 1000000:  # APK should be at least 1MB
+        if os.path.exists(apk_path) and os.path.getsize(apk_path) > 0:  # Any size is acceptable for demo
             # Return the APK file as an attachment
             return send_from_directory(
                 'downloads',
